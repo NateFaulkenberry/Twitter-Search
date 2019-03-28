@@ -1,0 +1,73 @@
+body {
+    background: #E6ECF0;
+}
+
+.ui-state-highlight {
+    border: 1px solid #dad55e;
+    background: #fffa90;
+    color: #777620;
+    height: 3em;
+}
+
+#loading {
+    display: none;
+    text-align: center;
+    padding: 5rem;
+}
+
+#success-search .count {
+    font-weight: bold;
+}
+
+#input-count { width: 25%; min-width: 4rem; }
+
+/*#twitter { max-width: 1000px }*/
+
+#twitter-my-location {
+    line-height: 2.8em;
+    padding: 0.5rem;
+    font-size: 0.8em;
+}
+
+#twitter-search {
+    margin: 10px 0;
+    padding: 10px;
+    background: #fff;
+}
+
+#twitter-search-clear:focus {
+    box-shadow: none;
+}
+
+#twitter-alerts {
+    margin: 10px 0;
+}
+
+#twitter-alerts .alert { display: none; }
+
+#twitter-feed {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#twitter-tutorial {
+    margin: 10px 0;
+}
+
+.twitter-card {
+    margin: 10px 0;
+    background: #fff;
+}
+
+.twitter-card-remove {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 0.125rem .32rem;
+    font-size: 0.9em;
+}
+
+.twitter-profile:hover {
+    text-decoration: none;
+}

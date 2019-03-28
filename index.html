@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Twitter Search</title>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.min.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="css/fontawesome.min.css">
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="css/twitter.css"/>
+</head>
+<body>
+
+    <!-- App Container -->
+    <div id="twitter" class="container" role="main">
+
+        <div class="row">
+
+
+            <div class="col">
+
+                <!-- Search Form -->
+                <form id="twitter-search">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        </div>
+                        <input name="username" type="text" class="form-control" placeholder="Username" size="120">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                        <input name="term" placeholder="Search Term" type="text" class="form-control" size="120">
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-globe-americas"></i></span>
+                        </div>
+                        <input id="twitter-geocode" name="geocode" placeholder="Latitude, Longitude" type="text" class="form-control">
+                        <div>
+                            <a id="twitter-my-location" href="#"><i class="fas fa-map-marker-alt"></i> Use my location</a>
+                        </div>
+                    </div>
+
+                    <label for="count">Max search results</label>
+                    <div id="input-count" class="input-group mb-3">
+                        <input id="count" name="count" pattern="\d*" min="1" max="40" type="number" class="form-control" placeholder="15">
+                    </div>
+
+                    <div class="clearfix">
+                        <button type="submit" class="btn btn-primary float-left">Search</button>
+                        <a id="twitter-search-clear" class="btn float-left" href="#">Clear Search</a>
+                    </div>
+                </form>
+
+                <div id="twitter-tutorial" class="alert alert-light" role="alert">
+                    <h4 class="alert-heading">Welcome to Twitter Search!</h4>
+                    <p>Created by <a href="mailto:nate.faulkenberry@gmail.com">Nate Faulkenberry</a> using Bootstrap 4, jQuery 3, Underscore.js, and Twitter-PHP!</p>
+                    <hr>
+                    <p class="mb-0">Not sure what to search for? Find out how <a class="tutorial-search" href="?username=%40BarackObama&count=10">Former President Barack Obama</a> is enjoying retirement. Or, <a class="tutorial-search" href="?username=BarackObama+MichelleObama&count=40">stay up-to-date with the whole Obama family</a>!</p>
+                    <hr>
+                    <p class="mb-0">Maybe you're interested in a <a class="tutorial-search" href="?term=fine%20dining&count=40">fine dining experience</a>!</p>
+                    <hr>
+                    <p class="mb-0">You can always <a class="tutorial-search location" href="#">share your location</a> to refine your searches to your area!
+                    <hr>
+                    </p>
+                    <p>And remember, be sure to share your search results on Twitter!</p>
+                    <p id="twitter-share"></p>
+                </div>
+            </div>
+
+
+            <div class="col">
+                <!-- Ajax status -->
+                <div id="loading">
+                    <i class="fas fa-spinner fa-spin fa-3x"></i>
+                </div>
+
+                <!-- Alert Messages -->
+                <div id="twitter-alerts">
+                    <div id="error-invalid" class="alert alert-warning" role="alert">
+                        Please enter a Username or Search Term!
+                    </div>
+
+                    <div id="error-geocode" class="alert alert-warning" role="alert">
+                        Please enter a valid Geocode!
+                    </div>
+
+                    <div id="error-my-location" class="alert alert-warning" role="alert">
+                        Couldn't find your current location!
+                    </div>
+
+                    <div id="error-no-results" class="alert alert-warning" role="alert">
+                        Your search returned no results!
+                    </div>
+
+                    <div id="error-server" class="alert alert-danger" role="alert">
+                        There was an error processing your request.
+                    </div>
+
+                    <div id="success-search" class="alert alert-light" role="alert">
+                        Your search returned <span class="count"></span> result<span class="plural">s</span>.
+                    </div>
+                </div>
+
+                <!-- Results feed -->
+                <ul id="twitter-feed"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Twitter card template -->
+    <script id="twitter-card" type="text/template">
+        <li>
+            <div class="twitter-card card">
+                <a class="twitter-card-remove btn btn-primary" href="#" role="button" title="Remove Tweet">
+                    <i class="fas fa-times-circle"></i>
+                </a>
+                <% if (tc.entities.media && tc.entities.media.length && tc.entities.media[0].type === 'photo') { %>
+                        <img class="card-img-top" src="<%= tc.entities.media[0].media_url_https %>">
+                <% } %>
+                <div class="card-body">
+                    <a class="twitter-profile" href="https://twitter.com/<%= tc.user.screen_name %>">
+                        <div class="media">
+                            <img class="mr-3" src="<%= tc.user.profile_image_url_https %>" alt="<%= tc.user.name %>">
+                            <div class="media-body">
+                                <h5 class="card-title text-dark"><%= tc.user.name %></h5>
+                                <h6 class="card-subtitle mb-2 text-muted">@<%= tc.user.screen_name %></h6>
+                            </div>
+                        </div>
+                    </a>
+                    <p><%= Twitter.ify.clean(tc.searchTerm ? Twitter.ify.bold(tc.text, tc.searchTerm) : tc.text) %></p>
+                    <a href="https://twitter.com/<%= tc.user.screen_name %>/status/<%= tc.id_str %>" class="card-link"><%= Twitter.timeAgo(tc.created_at) %></a>
+                </div>
+            </div>
+        </li>
+    </script>
+
+    <!-- Underscore -->
+    <script src="js/underscore-min.js"></script>
+
+    <!-- jQuery -->
+    <script src="js/jquery-3.3.1.min.js"></script>
+
+    <!-- jQuery UI -->
+    <script src="js/jquery-ui.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Plugins -->
+    <script src="js/timeago.min.js"></script>
+    <script src="js/jquery.ui.touch-punch.min.js"></script>
+    <script src="js/js.cookie.min.js"></script>
+
+    <!-- App -->
+    <script src="js/twitter.js"></script>
+
+    <!-- App Init -->
+    <script>
+        $(function () {
+            Twitter.init();
+        });
+    </script>
+</body>
+</html>
